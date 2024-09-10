@@ -17,8 +17,8 @@ pip install -r requirements.txt
 
 Run the application
 ```
-streamlit run app.py
-streamlit run main.py
+streamlit run app.py - like chatGPT UI
+streamlit run main.py - simple QA UI
 ```
 
 
