@@ -24,12 +24,26 @@ prompt_template=ChatPromptTemplate.from_messages(
 
 st.set_page_config(page_title="Conversational AI chatbot", page_icon="🦜")
 st.title(body="Conversational AI chatbot")
-input_text=st.text_input(label="What question you have in mind?")
+# input_text=st.text_input(label="What question you have in mind?")
 
-llm=ChatGroq(api_key=GROQ_API_KEY,model_name="Llama3-8b-8192")
-output_parser=StrOutputParser()
-chain=prompt_template|llm|output_parser
+if "messages" not in st.session_state:
+    st.session_state['messages']=[
+        {"role":"assistant","content":"Hi i am a AI powered conversational chatbot. How can i help you"}
+    ]
 
-if input_text:
-    st.write(chain.invoke({"question":input_text}))
+for msg in st.session_state.messages:
+    st.chat_message(msg['role']).write(msg['content'])
+
+if prompt:=st.chat_input(placeholder="What is machine learning?"):
+    st.session_state.messages.append({"role":"user","content":prompt})
+    st.chat_message("user").write(prompt)
+
+    llm=ChatGroq(api_key=GROQ_API_KEY,model_name="Llama3-8b-8192")
+    output_parser=StrOutputParser()
+    chain=prompt_template|llm|output_parser
+
+    with st.chat_message("assistant"):
+        response=chain.invoke(st.session_state.messages)
+        st.session_state.messages.append({'role':'assistant',"content":response})
+        st.write(response)
 
